@@ -17,6 +17,38 @@ ZooEnclosure::~ZooEnclosure() {
     delete[] animals; 
 }
 
+// Item 10 & Item 11 & Item 12
+ZooEnclosure& ZooEnclosure::operator=(const ZooEnclosure& rhs) {
+    std::cout << "[Copy Assignment] Apelat pentru a suprascrie '" << habitatName 
+              << "' cu datele din '" << rhs.habitatName << "'.\n";
+
+    // Item 11: Handle assignment to self in operator=
+    // Daca facem tarc1 = tarc1, vrem sa evitam stergerea memoriei proprii inainte de a o copia!
+    if (this == &rhs) {
+        std::cout << "  -> [Item 11] Self-assignment detectat. Nu se face nicio modificare.\n";
+        return *this; // Item 10: returnam reference la *this
+    }
+
+    // Eliberam memoria veche a obiectului in care copiem
+    delete[] animals;
+
+    // Item 12: Copy all parts of an object (la fel ca la copy constructor).
+    // Trebuie sa fim atenti sa nu uitam campuri "ascunse" (ex. maxCapacity, currentCount).
+    habitatName = rhs.habitatName + " (Atribuit)";
+    maxCapacity = rhs.maxCapacity;
+    currentCount = rhs.currentCount;
+
+    // Deep copy pentru array
+    animals = new std::string[maxCapacity];
+    for (int i = 0; i < currentCount; ++i) {
+        animals[i] = rhs.animals[i];
+    }
+
+    // Item 10: Have assignment operators return a reference to *this.
+    // Permite "chained assignments" (ex: tarc1 = tarc2 = tarc3;)
+    return *this;
+}
+
 // 5. Copy Constructor (Deep Copy)
 // Daca lasam compilatorul sa faca o copie "Shallow" (adresa pointerului), 
 // doua obiecte vor crede ca sunt proprietare pe aceeasi zona de memorie. Cand primul obiect 
